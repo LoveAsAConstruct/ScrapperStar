@@ -14,7 +14,7 @@ public class ShipMovementManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        print("start?");
+        //print("start?");
         //InputActions.FindActionMap("Player").FindAction("Move").performed += Move;
         //InputActions.FindActionMap("Player").FindAction("Boost").performed += Boost;
     }
@@ -22,15 +22,15 @@ public class ShipMovementManager : MonoBehaviour
         Instantiate(bullet, muzzle.transform.position, muzzle.transform.rotation);
     }
     private void Boost(InputAction.CallbackContext context){
-        print("beep");
+        //print("beep");
     }
     public void Stop(InputAction.CallbackContext context){
         GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         GetComponent<Rigidbody2D>().angularVelocity=0;
     }
     public void Move(InputAction.CallbackContext context){
-        print("move");
-        Debug.Log(context.ReadValue<Vector2>());
+        //print("move");
+        //Debug.Log(context.ReadValue<Vector2>());
         movement = context.ReadValue<Vector2>();
         
     }
