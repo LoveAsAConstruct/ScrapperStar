@@ -19,6 +19,10 @@ public class CustomizeCanvas : MonoBehaviour
     public TMPro.TMP_InputField Rotinput;
     public TMPro.TextMeshProUGUI titleText;
     public bool inputOpen = true;
+    public GameObject ThrusterOptions;
+    public Slider powerslider;
+    public TMPro.TMP_InputField powerinput;
+    public TMPro.TMP_Dropdown BindingDropdown;
     // Start is called before the first frame update
     void Start()
     {
@@ -47,6 +51,37 @@ public class CustomizeCanvas : MonoBehaviour
             selected.gameObject.GetComponent<RectTransform>().localRotation = Quaternion.Euler(0, 0, Rot);
             selected.WorldObj.transform.localPosition = new Vector2(Xpos, Ypos);
             selected.WorldObj.transform.localRotation = Quaternion.Euler(0, 0, Rot);
+
+            if(selected.component == ComponentButton.ComponentType.thruster)
+            {
+                selected.WorldObj.GetComponent<Thruster>().sensitivity = powerslider.value;
+            }
+        }
+    }
+    public void DropdownInput()
+    {
+        if(selected != null)
+        {
+            if(selected.component == ComponentButton.ComponentType.thruster)
+            {
+                Thruster thruster = selected.WorldObj.GetComponent<Thruster>();
+                if (BindingDropdown.value == 0)
+                {
+                    thruster.SetBinding(Thruster.Binding.forward);
+                }
+                if (BindingDropdown.value == 1)
+                {
+                    thruster.SetBinding(Thruster.Binding.left);
+                }
+                if (BindingDropdown.value == 2)
+                {
+                    thruster.SetBinding(Thruster.Binding.right);
+                }
+                if (BindingDropdown.value == 3)
+                {
+                    thruster.SetBinding(Thruster.Binding.forward);
+                }
+            }
         }
     }
     public void EditorUpdate()
@@ -60,11 +95,29 @@ public class CustomizeCanvas : MonoBehaviour
             rotSlider.value = selected.gameObject.GetComponent<RectTransform>().rotation.eulerAngles.z / 45;
             Yslider.value = pos.y;
             Xslider.value = pos.x;
-            
+            titleText.text = selected.component.ToString();
             Yinput.text = pos.y.ToString();
             Xinput.text = pos.x.ToString();
             Rotinput.text = (rotSlider.value * 45).ToString();
             inputOpen = true;
+
+            if (selected.component == ComponentButton.ComponentType.thruster)
+            {
+                Thruster thruster = selected.WorldObj.GetComponent<Thruster>();
+                powerslider.value = thruster.sensitivity;
+                if(thruster.bound == Thruster.Binding.forward)
+                {
+                    BindingDropdown.value = 0;
+                }
+                else if (thruster.bound == Thruster.Binding.left)
+                {
+                    BindingDropdown.value = 1;
+                }
+                else if (thruster.bound == Thruster.Binding.right)
+                {
+                    BindingDropdown.value = 2;
+                }
+            }
         }
     }
     public void ColorUpdate()
@@ -103,10 +156,12 @@ public class CustomizeCanvas : MonoBehaviour
             print(buttonPos);
             button.GetComponent<RectTransform>().anchoredPosition += buttonPos;
             //button.transform.Translate(buttonPos);
+            button.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "T" + i.ToString();
             button.GetComponent<ComponentButton>().WorldObj = child;
             button.GetComponent<RectTransform>().localRotation = Quaternion.Euler(0, 0, child.transform.localRotation.eulerAngles.z);
             ThrusterButtons.Add(button);
             Buttons.Add(button);
+
         }
         ColorUpdate();
     }

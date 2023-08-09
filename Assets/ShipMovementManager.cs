@@ -8,12 +8,24 @@ public class ShipMovementManager : MonoBehaviour
     public Vector2 movement;
     public GameObject muzzle;
     public GameObject bullet;
-    public Thruster[] driveGroup;
-    public Thruster[] leftGroup;
-    public Thruster[] rightGroup;
+    public List<Thruster> driveGroup = new List<Thruster>();
+    public List<Thruster> leftGroup = new List<Thruster>();
+    public List<Thruster> rightGroup = new List<Thruster>();
     // Start is called before the first frame update
     void Start()
     {
+        foreach(Thruster thruster in driveGroup)
+        {
+            thruster.bound = Thruster.Binding.forward;
+        }
+        foreach (Thruster thruster in leftGroup)
+        {
+            thruster.bound = Thruster.Binding.left;
+        }
+        foreach (Thruster thruster in rightGroup)
+        {
+            thruster.bound = Thruster.Binding.right;
+        }
         //print("start?");
         //InputActions.FindActionMap("Player").FindAction("Move").performed += Move;
         //InputActions.FindActionMap("Player").FindAction("Boost").performed += Boost;
