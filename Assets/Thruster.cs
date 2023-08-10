@@ -10,10 +10,14 @@ public class Thruster : MonoBehaviour
     ParticleSystem particles;
     public enum Binding {right, left, forward, boost };
     public Binding bound;
+    //float emmision = 0;
     // Start is called before the first frame update
     void Start()
     {
+
         particles = GetComponentInChildren<ParticleSystem>();
+        ParticleSystem.EmissionModule emission = particles.emission;
+        //emission.rateOverTimeMultiplier = power;
     }
     public void SetBinding(Binding binding)
     {
@@ -22,6 +26,8 @@ public class Thruster : MonoBehaviour
         manager.driveGroup.Remove(thruster);
         manager.leftGroup.Remove(thruster);
         manager.rightGroup.Remove(thruster);
+        
+        //particles.emission = emission;
         if(binding == Binding.forward)
         {
             manager.driveGroup.Add(thruster);
@@ -53,15 +59,24 @@ public class Thruster : MonoBehaviour
     {
         if(particles.isPlaying && !enabled){
                 particles.Stop();
-                
         }
         if(enabled){
-            if(!particles.isEmitting){
-                print("play");
+            if(power <= 0)
+            {
+                //print("play");
+                particles.Stop();
+                //particles.Play();
+            }
+            else if(!particles.isEmitting){
+                //print("play");
                 particles.Stop();
                 particles.Play();
+                gameObject.transform.parent.parent.gameObject.GetComponent<Rigidbody2D>().AddForceAtPosition(-gameObject.transform.up * sensitivity * power, gameObject.transform.position);
             }
-            gameObject.transform.parent.parent.gameObject.GetComponent<Rigidbody2D>().AddForceAtPosition(-gameObject.transform.up*sensitivity*power,gameObject.transform.position);
+            else
+            {
+                gameObject.transform.parent.parent.gameObject.GetComponent<Rigidbody2D>().AddForceAtPosition(-gameObject.transform.up * sensitivity * power, gameObject.transform.position);
+            }
         }
     }
 }
