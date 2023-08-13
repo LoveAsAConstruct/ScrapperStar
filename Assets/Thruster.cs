@@ -10,14 +10,18 @@ public class Thruster : MonoBehaviour
     ParticleSystem particles;
     public enum Binding {right, left, forward, boost };
     public Binding bound;
-    //float emmision = 0;
+    //public float emmis
+    float emmisionConst = 0;
+    float speedConst = 0;
     // Start is called before the first frame update
     void Start()
     {
-
+        //ParticleSystem.EmissionModule emission = particles.emission;
+        
+    
         particles = GetComponentInChildren<ParticleSystem>();
-        ParticleSystem.EmissionModule emission = particles.emission;
-        //emission.rateOverTimeMultiplier = power;
+        emmisionConst = particles.emission.rateOverTimeMultiplier;
+        speedConst = particles.main.startSpeed.constant;
     }
     public void SetBinding(Binding binding)
     {
@@ -61,7 +65,11 @@ public class Thruster : MonoBehaviour
                 particles.Stop();
         }
         if(enabled){
-            if(power <= 0)
+            ParticleSystem.EmissionModule emission = particles.emission;
+            ParticleSystem.MinMaxCurve main = particles.main.startSpeed;
+            main.constant = speedConst * power;
+            emission.rateOverTimeMultiplier = power*emmisionConst;
+            if (power <= 0)
             {
                 //print("play");
                 particles.Stop();

@@ -488,12 +488,14 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
+  sprite: {fileID: 3130300434188972917}
   tn: {fileID: 5991354221065909328}
   ts: {fileID: 8053933601012320768}
   tnw: {fileID: 5761632941905596018}
   tne: {fileID: 2385545455507249388}
   tsw: {fileID: 8652437411004671126}
   tse: {fileID: 8438001435285082750}
+  modifier: 10
 --- !u!114 &7717518783171288319
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -507,10 +509,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 12
+    VectorObservationSize: 2
     NumStackedVectorObservations: 1
     m_ActionSpec:
-      m_NumContinuousActions: 6
+      m_NumContinuousActions: 2
       BranchSizes: 01000000
     VectorActionSize: 
     VectorActionDescriptions: []
@@ -631,6 +633,10 @@ PrefabInstance:
       propertyPath: enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6384749512777916530, guid: 5abd63f7dbe164b478844badc4c76cf7, type: 3}
+      propertyPath: sensitivity
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 6384749512777916535, guid: 5abd63f7dbe164b478844badc4c76cf7, type: 3}
       propertyPath: m_Name
       value: Thruster (1)
@@ -707,6 +713,10 @@ PrefabInstance:
     - target: {fileID: 6384749512777916530, guid: 5abd63f7dbe164b478844badc4c76cf7, type: 3}
       propertyPath: enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6384749512777916530, guid: 5abd63f7dbe164b478844badc4c76cf7, type: 3}
+      propertyPath: sensitivity
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 6384749512777916535, guid: 5abd63f7dbe164b478844badc4c76cf7, type: 3}
       propertyPath: m_Name
@@ -805,6 +815,10 @@ PrefabInstance:
       propertyPath: enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6384749512777916530, guid: 5abd63f7dbe164b478844badc4c76cf7, type: 3}
+      propertyPath: sensitivity
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 6384749512777916535, guid: 5abd63f7dbe164b478844badc4c76cf7, type: 3}
       propertyPath: m_Name
       value: Thruster (3)
@@ -901,6 +915,10 @@ PrefabInstance:
     - target: {fileID: 6384749512777916530, guid: 5abd63f7dbe164b478844badc4c76cf7, type: 3}
       propertyPath: enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6384749512777916530, guid: 5abd63f7dbe164b478844badc4c76cf7, type: 3}
+      propertyPath: sensitivity
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 6384749512777916535, guid: 5abd63f7dbe164b478844badc4c76cf7, type: 3}
       propertyPath: m_Name
@@ -999,6 +1017,10 @@ PrefabInstance:
       propertyPath: enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6384749512777916530, guid: 5abd63f7dbe164b478844badc4c76cf7, type: 3}
+      propertyPath: sensitivity
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 6384749512777916535, guid: 5abd63f7dbe164b478844badc4c76cf7, type: 3}
       propertyPath: m_Name
       value: Thruster
@@ -1075,6 +1097,10 @@ PrefabInstance:
     - target: {fileID: 6384749512777916530, guid: 5abd63f7dbe164b478844badc4c76cf7, type: 3}
       propertyPath: enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6384749512777916530, guid: 5abd63f7dbe164b478844badc4c76cf7, type: 3}
+      propertyPath: sensitivity
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 6384749512777916535, guid: 5abd63f7dbe164b478844badc4c76cf7, type: 3}
       propertyPath: m_Name
