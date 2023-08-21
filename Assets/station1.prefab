@@ -495,6 +495,7 @@ MonoBehaviour:
   tne: {fileID: 2385545455507249388}
   tsw: {fileID: 8652437411004671126}
   tse: {fileID: 8438001435285082750}
+  target: {fileID: 0}
   modifier: 10
 --- !u!114 &7717518783171288319
 MonoBehaviour:
@@ -509,10 +510,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 2
+    VectorObservationSize: 7
     NumStackedVectorObservations: 1
     m_ActionSpec:
-      m_NumContinuousActions: 2
+      m_NumContinuousActions: 3
       BranchSizes: 01000000
     VectorActionSize: 
     VectorActionDescriptions: []

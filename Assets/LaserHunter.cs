@@ -4,18 +4,11 @@ using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
-public class LaserEnemyAgent : Agent
+public class LaserHunter : Agent
 {
     public bool training;
-    public GameObject target;
-    public Rigidbody2D targetrb;
     public ParticleSystem laser;
     Rigidbody2D rb;
-    public Thruster FT;
-    public Thruster LT;
-    public Thruster RT;
-    public Thruster SLT;
-    public Thruster SRT;
     public Color wincolor;
     public float range;
     public float power;
@@ -26,15 +19,15 @@ public class LaserEnemyAgent : Agent
     }
     public override void OnEpisodeBegin()
     {
-        if(!training){
-            this.range = Random.Range(1,20);
+        if(training){
+            this.range = 5;
             time = 0;
             //this.rb.angularVelocity = Random.Range(-10,10);
             this.rb.velocity = Vector2.zero;
             this.gameObject.transform.localPosition = Random.insideUnitCircle*15;
             this.rb.angularVelocity = 0;
             this.transform.rotation = Quaternion.Euler(0, 0, Random.Range(0,360));
-            this.power = Random.Range(6,15);
+            this.power = Random.Range(6,25);
         }
         
         //sprite.color = Random.ColorHSV(0, 1, 1, 1, 0.25f, 0.75f);
@@ -48,22 +41,23 @@ public class LaserEnemyAgent : Agent
         var continuousActionsOut = actionsOut.ContinuousActions;
         continuousActionsOut[1] = Input.GetAxis("Horizontal");
         continuousActionsOut[0] = Input.GetAxis("Vertical");
-
+        if(Input.GetKey(KeyCode.Space)){
+            continuousActionsOut[2] = 1;
+        }
+        else{
+            continuousActionsOut[2] = 0;
+        }
     }
     public override void CollectObservations(VectorSensor sensor)
     {
         
-        sensor.AddObservation(this.transform.localPosition.x);
-        sensor.AddObservation(this.transform.localPosition.y);
+        //sensor.AddObservation(this.transform.localPosition.x);
+        //sensor.AddObservation(this.transform.localPosition.y);
         sensor.AddObservation(rb.velocity.x);
         sensor.AddObservation(rb.velocity.y);
-        sensor.AddObservation(targetrb.velocity.x);
-        sensor.AddObservation(targetrb.velocity.y);
-        sensor.AddObservation(target.transform.localPosition.x);
-        sensor.AddObservation(target.transform.localPosition.y);
-        sensor.AddObservation(target.transform.rotation.eulerAngles.z);
         sensor.AddObservation(rb.angularVelocity);
-        sensor.AddObservation(this.transform.rotation.eulerAngles.z);
+        sensor.AddObservation(this.transform.forward.x);
+        sensor.AddObservation(this.transform.forward.y);
         //sensor.AddObservation(rb.angularVelocity);
         base.CollectObservations(sensor);
         //print("lased");
@@ -86,46 +80,60 @@ public class LaserEnemyAgent : Agent
     public override void OnActionReceived(ActionBuffers actions)
     {
         time += Time.deltaTime;
-        float distanceToTarget = Vector3.Distance(this.transform.localPosition, target.transform.position);
-        rb.AddForce(new Vector2(gameObject.transform.up.x, gameObject.transform.up.y) * (Mathf.Abs((actions.ContinuousActions[0])) * power));
-        rb.AddTorque(actions.ContinuousActions[1]*0.25f/6*power);
-        AddReward(-Mathf.Abs(actions.ContinuousActions[1]*Time.deltaTime)*4f);
-        AddReward(-Time.deltaTime);
         
-            RaycastHit2D hit;
-            hit = Physics2D.Raycast(gameObject.transform.position+gameObject.transform.up, new Vector2(transform.up.x, transform.up.y),range);
-            //Debug.DrawLine(gameObject.transform.position, new Vector3(hit.point.x,hit.point.y,0),Color.yellow, Time.deltaTime*10);
-            
-            if(hit.collider != null){
-                if(hit.collider.gameObject.GetComponent<LaserEnemyAgent>() != null){
-                    if(actions.ContinuousActions[2]<=0f){
-                        AddReward(-Time.deltaTime*10);
-                    }
+        rb.AddForce(new Vector2(gameObject.transform.up.x, gameObject.transform.up.y) * (Mathf.Abs((actions.ContinuousActions[0])) * power));
+        rb.AddTorque((actions.ContinuousActions[1])*0.25f/6*power);
+        AddReward(-Mathf.Abs(actions.ContinuousActions[1]*Time.deltaTime)*4f);
+        AddReward(Time.deltaTime);
+        
+        RaycastHit2D hit;
+        hit = Physics2D.Raycast(gameObject.transform.position, new Vector2(transform.up.x, transform.up.y),range);
+        //Debug.DrawLine(gameObject.transform.position, new Vector3(hit.point.x,hit.point.y,0),Color.yellow, Time.deltaTime*10);
+        
+        if(hit.collider != null){
+            if(hit.collider.gameObject.GetComponent<LaserEnemyAgent>() != null){
+                if(actions.ContinuousActions[2]!=1){
+                    AddReward(-Time.deltaTime*10);
                 }
             }
-            if(actions.ContinuousActions[2]>0f){
-                
-                Debug.DrawRay(transform.position, new Vector2(transform.up.x, transform.up.y)*range, Color.red,Time.deltaTime*range);
-                if(hit.collider != null){
-                    if(hit.collider.gameObject.GetComponent<LaserEnemyAgent>() != null){
-                        AddReward(15);
-                        hit.collider.gameObject.GetComponent<LaserEnemyAgent>().Hit();
-                        //StopAllCoroutines();
-                        //StartCoroutine(WinFade(0.1f));
-                        //EndEpisode();
+        }
+        if(actions.ContinuousActions[2]>0.25f){
+            
+            Debug.DrawRay(transform.position, new Vector2(transform.up.x, transform.up.y)*range, Color.red,Time.deltaTime*range);
+            if(hit.collider != null){
+                if(hit.collider.gameObject.GetComponent<HealthManager>() != null){
+                    AddReward(50);
+                    hit.collider.gameObject.GetComponent<HealthManager>().Die();
+                    if(hit.collider.gameObject.tag == "HostileTarget"){
+                        AddReward(25);
                     }
-                    else{
-                        //AddReward(-2f*Time.deltaTime);
+                    if(hit.collider.gameObject.tag == "Obstacle"){
+                        AddReward(-60);
                     }
-                
+                    StopAllCoroutines();
+                    StartCoroutine(WinFade(0.1f));
+                    //EndEpisode();
                 }
                 else{
-                    //AddReward(-2f*Time.deltaTime);
+                    AddReward(-0.5f*Time.deltaTime);
                 }
-            }
             
-        
-        if(actions.ContinuousActions[2]>0f){
+            }
+            else{
+                AddReward(-0.5f*Time.deltaTime);
+            }
+        }
+        else{
+            Debug.DrawRay(transform.position, new Vector2(transform.up.x, transform.up.y)*range, Color.blue,Time.deltaTime*range);
+        }            
+        if(Vector3.Distance(transform.position, Vector3.zero)>75){
+            AddReward(-50);
+            EndEpisode();
+        }
+        if(Vector3.Distance(transform.position, Vector3.zero)>59){
+            AddReward(-5*Time.deltaTime);
+        }
+        if(actions.ContinuousActions[2]>0.25f){
             if(!laser.isPlaying){
                 laser.Play();
             }
@@ -177,7 +185,7 @@ public class LaserEnemyAgent : Agent
     }
     // Update is called once per frame
     private void OnCollisionEnter2D(Collision2D other) {
-            AddReward(-50);
+            AddReward(-100);
             EndEpisode();
         }
     void Update()

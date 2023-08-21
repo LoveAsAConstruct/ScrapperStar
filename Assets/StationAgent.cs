@@ -42,7 +42,8 @@ public class StationAgent : Agent
     {
         time = 0;
         //this.rb.angularVelocity = Random.Range(-10,10);
-        this.rb.velocity = Vector2.zero;
+        this.rb.velocity = Random.insideUnitCircle;
+        this.rb.angularVelocity = Random.Range(-5,5);
         this.gameObject.transform.localPosition = Vector2.zero;
         sprite.color = Random.ColorHSV(0,1,1,1,0.25f,0.75f);
         target.transform.localPosition = Random.insideUnitCircle*5;
@@ -64,8 +65,8 @@ public class StationAgent : Agent
         sensor.AddObservation(this.transform.localPosition.y);
         sensor.AddObservation(rb.velocity.x);
         sensor.AddObservation(rb.velocity.y);
-        sensor.AddObservation(target.localPosition.x);
-        sensor.AddObservation(target.localPosition.y);
+        //sensor.AddObservation(target.localPosition.x);
+        //sensor.AddObservation(target.localPosition.y);
         sensor.AddObservation(rb.angularVelocity);
         sensor.AddObservation(this.transform.localRotation.eulerAngles.z);
         /*sensor.AddObservation(tn.power);
@@ -74,6 +75,7 @@ public class StationAgent : Agent
         sensor.AddObservation(ts.power);
         sensor.AddObservation(tse.power);
         sensor.AddObservation(tsw.power);*/
+        base.CollectObservations(sensor);
     }
     float time = 0;
     public float modifier = 10;
@@ -93,8 +95,11 @@ public class StationAgent : Agent
         tsw.power = -actionBuffers.ContinuousActions[0];
         tn.power = actionBuffers.ContinuousActions[1];
         ts.power = -actionBuffers.ContinuousActions[1];*/
+        rb.AddTorque(actionBuffers.ContinuousActions[2]);
         rb.AddForce(new Vector2(actionBuffers.ContinuousActions[0], actionBuffers.ContinuousActions[1])*modifier);
-        AddReward(oldist-distanceToTarget*Time.deltaTime);
+        AddReward(1-Mathf.Abs(rb.angularVelocity)*Time.deltaTime);
+        AddReward(-rb.velocity.magnitude*Time.deltaTime);
+        AddReward(1-distanceToTarget*Time.deltaTime);
         //AddReward((-rb.velocity.magnitude) * Time.deltaTime);
         //AddReward((-this.transform.localPosition.magnitude+5)*Time.deltaTime);
         //print((-distanceToTarget / 2 + 1) * Time.deltaTime);
@@ -106,15 +111,15 @@ public class StationAgent : Agent
         }
         if (distanceToTarget > 10)
         {
-            AddReward(-5);
+            AddReward(-25);
             EndEpisode();
             
         }
-        if (distanceToTarget < 0.5)
+        /*if (distanceToTarget < 0.5)
         {
             AddReward(Time.deltaTime);
             EndEpisode();
-        }
+        }*/
         oldist = distanceToTarget;
     }
 }

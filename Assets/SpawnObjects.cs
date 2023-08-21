@@ -10,11 +10,15 @@ public class SpawnObjects : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Spawn();
+    }
+    public void Spawn(){
+        print("spawn");
         for(int i = 0; i < count; i++){
-            Instantiate(asteroid, Random.insideUnitCircle*range, Quaternion.identity);
+            GameObject GO = Instantiate(asteroid, Random.insideUnitCircle*range, Quaternion.identity);
+            GO.transform.parent = gameObject.transform;
         }
     }
-
     // Update is called once per frame
     void Update()
     {
