@@ -11,6 +11,7 @@ public class LaserHunter : Agent
     Rigidbody2D rb;
     public Color wincolor;
     public float range;
+    public float damage;
     public float power;
     // Start is called before the first frame update
     void Start()
@@ -103,15 +104,26 @@ public class LaserHunter : Agent
             if(hit.collider != null){
                 if(hit.collider.gameObject.GetComponent<HealthManager>() != null){
                     AddReward(50);
-                    hit.collider.gameObject.GetComponent<HealthManager>().Die();
-                    if(hit.collider.gameObject.tag == "HostileTarget"){
-                        AddReward(25);
+                    if (training)
+                    {
+                        hit.collider.gameObject.GetComponent<HealthManager>().Die();
+                        if (hit.collider.gameObject.tag == "HostileTarget")
+                        {
+                            AddReward(25);
+                        }
+                        if (hit.collider.gameObject.tag == "Obstacle")
+                        {
+                            AddReward(-60);
+                        }
+                        StopAllCoroutines();
+                        StartCoroutine(WinFade(0.1f));
                     }
-                    if(hit.collider.gameObject.tag == "Obstacle"){
-                        AddReward(-60);
+                    else
+                    {
+                        hit.collider.gameObject.GetComponent<HealthManager>().Damage(damage*Time.deltaTime);
+                        print("damage");
                     }
-                    StopAllCoroutines();
-                    StartCoroutine(WinFade(0.1f));
+                    
                     //EndEpisode();
                 }
                 else{
